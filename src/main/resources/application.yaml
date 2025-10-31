@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: BlogManagement
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: 123
+    username: postgres
+    url: jdbc:postgresql://localhost:5433/BlogManagement
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/BlogManagement
+server:
+  port: 8088
