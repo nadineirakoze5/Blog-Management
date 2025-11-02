@@ -5,6 +5,10 @@ import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Repositories.UserRepositories;
 import org.example.blogmanagement.GlobalException.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final List<UserResponseDto> users = new ArrayList<>();
-    private UserRepositories Repository;
+    private final UserRepositories Repository;
 
     @Autowired
     public UserService(UserRepositories Repository) {
@@ -49,5 +53,14 @@ public class UserService {
             throw new ResourceNotFoundException(" We can't delete User with this id: " + UserId);
         }
       Repository.deleteById(UserId);
+    }
+
+
+    public Page<UserResponseDto> getUsersPaginated(int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return Repository.findAll(pageable)
+                .map(user -> new UserResponseDto(user.getUserId(), user.getUserName(), user.getUserEmail()));
     }
 }

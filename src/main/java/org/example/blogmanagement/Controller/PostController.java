@@ -4,6 +4,8 @@ import org.example.blogmanagement.Dtos.PostRequestDto;
 import org.example.blogmanagement.Dtos.PostResponseDto;
 import org.example.blogmanagement.Service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -37,5 +39,20 @@ public class PostController {
         postService.deletePost(id);
         return "Post deleted successfully";
     }
+
+
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<PostResponseDto>> getAllPostsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "postId") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+
+        Page<PostResponseDto> posts = postService.getPostsPaginated(page, size, sortBy, sortDir);
+        return ResponseEntity.ok(posts);
+    }
+
+
 }
 

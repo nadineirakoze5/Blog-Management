@@ -20,5 +20,11 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/BlogManagement
+
+#  management:
+#    endpoints:
+#      web:
+#        exposure:
+#          include=*:
 server:
   port: 8088

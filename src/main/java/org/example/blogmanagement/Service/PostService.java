@@ -7,6 +7,10 @@ import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Repositories.PostRepositories;
 import org.example.blogmanagement.Repositories.UserRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,6 +60,15 @@ public class PostService {
         Post post = Repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("We can't delete User with this id: " + id));
         Repository.delete(post);
+    }
+
+
+    public Page<PostResponseDto> getPostsPaginated(int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return Repository.findAll(pageable)
+                .map(post -> new PostResponseDto(post.getPostId(), post.getPostTitle(), post.getPostContent(), post.getAuthorId()));
     }
 }
 

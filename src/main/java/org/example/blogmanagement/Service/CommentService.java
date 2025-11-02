@@ -5,6 +5,10 @@ import org.example.blogmanagement.GlobalException.ResourceNotFoundException;
 import org.example.blogmanagement.Models.Comments;
 import org.example.blogmanagement.Repositories.CommentsRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,5 +61,14 @@ public class CommentService {
         Comments comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + id));
         commentRepository.delete(comment);
+    }
+
+    public Page<CommentResponseDto> getCommentsPaginated(int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return commentRepository.findAll(pageable)
+                .map(comment -> new CommentResponseDto(comment.getCommentId(), comment.getCommentsContent(),
+                        comment.getPostId(), comment.getAuthorId()));
     }
 }

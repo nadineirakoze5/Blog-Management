@@ -5,6 +5,7 @@ import org.example.blogmanagement.Dtos.UserRequestDto;
 import org.example.blogmanagement.Dtos.UserResponseDto;
 import org.example.blogmanagement.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,4 +45,15 @@ public class UserController {
         userService.deleteUser(id);
         return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
     }
+
+
+    @GetMapping("/page")
+    public Page<UserResponseDto> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "userName") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        return userService.getUsersPaginated(page, size, sortBy, sortDir);
+    }
+
 }
