@@ -19,5 +19,5 @@ public class PostRequestDto {
 
     @NotEmpty(message = "User ID is required")
     @Min(value = 1, message = "User ID must be greater than 0")
-    private int authorId;
+    private String authorId;
 }

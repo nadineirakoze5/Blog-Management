@@ -20,22 +20,25 @@ public class PostService {
 
     private final PostRepositories Repository;
 
-//    @Autowired
-//    private  UserRepositories UserRepositories;
+    @Autowired
+    private  UserRepositories UserRepositories;
 
     @Autowired
     public PostService(PostRepositories Repository) {
+
         this.Repository = Repository;
     }
 
 
     public PostResponseDto CreatePost(PostRequestDto request) {
-        User user = new User();
-                
+        User user = UserRepositories.findById(request.getAuthorId())
+                .orElseThrow(() -> new ResourceNotFoundException("User with Id '" + request.getAuthorId() + "' was not found"));
+
+
         Post post = new Post();
         post.setPostTitle(request.getPostTitle());
         post.setPostContent(request.getPostContent());
-        post.setAuthorId(request.getAuthorId());
+        post.setAuthorId(user.getUserId());
 
         Repository.save(post);
 
