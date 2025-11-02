@@ -33,6 +33,13 @@ management:
     env:
       show-values: always
 
+info:
+  app:
+    name: BlogManagement
+    version: 1.0.0
+    description: "This is my blog management app"
+  developer:
+    name: Nadine
 
 server:
   port: 8088
