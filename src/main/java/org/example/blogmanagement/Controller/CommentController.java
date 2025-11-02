@@ -4,6 +4,7 @@ import org.example.blogmanagement.Dtos.CommentRequestDto;
 import org.example.blogmanagement.Dtos.CommentResponseDto;
 import org.example.blogmanagement.Service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -42,5 +43,15 @@ public class CommentController {
     public String deleteComment(@PathVariable String id) {
         commentservice.deleteComment(id);
         return "Comment deleted successfully";
+    }
+
+
+    @GetMapping("/page")
+    public Page<CommentResponseDto> getComments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "commentContent") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        return commentservice.getCommentsPaginated(page, size, sortBy, sortDir);
     }
 }
