@@ -1,9 +1,12 @@
 package org.example.blogmanagement.Service;
+import lombok.extern.slf4j.Slf4j;
 import org.example.blogmanagement.Dtos.UserRequestDto;
 import org.example.blogmanagement.Dtos.UserResponseDto;
 import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Repositories.UserRepositories;
 import org.example.blogmanagement.GlobalException.ResourceNotFoundException;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,15 +18,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserService {
+//    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final List<UserResponseDto> users = new ArrayList<>();
     private final UserRepositories Repository;
 
     @Autowired
     public UserService(UserRepositories Repository) {
+
         this.Repository = Repository;
     }
     public UserResponseDto InsertUser(UserRequestDto UserRequest) {
+
+//        log.info("Added user to database");
+
         User user = new User();
 
         user.setUserName(UserRequest.getUsername());
@@ -31,10 +40,12 @@ public class UserService {
         user.setPassword(UserRequest.getPassword());
 
         Repository.save(user);
+//        logger.info("Added user to database");
         return new UserResponseDto(user.getUserId(), user.getUserName(), user.getUserEmail());
     }
 
     public List<UserResponseDto> getAllUser() {
+//        log.info("Fetching all users");
         return Repository.findAll().stream().map(User -> new UserResponseDto(User.getUserId(), User.getUserName(), User.getUserEmail()))
                 .collect(Collectors.toList());
 
@@ -43,9 +54,14 @@ public class UserService {
 
     public UserResponseDto getUserById(String UserId) {
         User user = Repository.findById(UserId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + UserId));
+                .orElseThrow(() -> {
+                    log.warn("User not found with id {}", UserId);
+                    return new ResourceNotFoundException("User not found with id: " + UserId);
+                });
+        log.info("Fetched user {} with id {}", user.getUserName(), UserId);
         return new UserResponseDto(user.getUserId(), user.getUserName(), user.getUserEmail());
     }
+
 
 
     public void deleteUser(String UserId) {
