@@ -1,7 +1,9 @@
 package org.example.blogmanagement.Controller;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.example.blogmanagement.Dtos.PostRequestDto;
 import org.example.blogmanagement.Dtos.PostResponseDto;
+import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,12 +22,14 @@ public class PostController {
     }
 
     @PostMapping
-    public PostResponseDto CreatePost(@Valid @RequestBody PostRequestDto request) {
-        return postService.CreatePost(request);
+    public PostResponseDto CreatePost(@Valid @RequestBody PostRequestDto request, Authentication auth) {
+        User currentUser = (User) auth.getPrincipal();
+        return postService.CreatePost(request, currentUser);
     }
 
     @GetMapping
     public List<PostResponseDto> getAllPosts() {
+
         return postService.getAllPosts();
     }
 
@@ -35,9 +39,10 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public String deletePost(@PathVariable String id) {
-        postService.deletePost(id);
-        return "Post deleted successfully";
+    public ResponseEntity<String> deletePost(@PathVariable String id, Authentication auth) {
+        User currentUser = (User) auth.getPrincipal();
+        postService.deletePost(id, currentUser);
+        return ResponseEntity.ok( "Post deleted successfully");
     }
 
 

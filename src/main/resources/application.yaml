@@ -20,6 +20,10 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/BlogManagement
+  security:
+    user:
+      name: nadine
+      password: 123
 
 management:
   endpoints:
@@ -30,16 +34,24 @@ management:
   endpoint:
     health:
       show-details: always
-    env:
-      show-values: always
-
-info:
-  app:
-    name: BlogManagement
-    version: 1.0.0
-    description: "This is my blog management app"
-  developer:
-    name: Nadine
-
+#    env:
+#      show-values: always
 server:
   port: 8088
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+  default-produces-media-type: application/json
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  bearerAuth: []

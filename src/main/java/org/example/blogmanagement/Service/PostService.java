@@ -4,6 +4,7 @@ import org.example.blogmanagement.Dtos.PostResponseDto;
 import org.example.blogmanagement.GlobalException.ResourceNotFoundException;
 import org.example.blogmanagement.Models.Post;
 import org.example.blogmanagement.Models.User;
+import org.example.blogmanagement.Repositories.CommentsRepositories;
 import org.example.blogmanagement.Repositories.PostRepositories;
 import org.example.blogmanagement.Repositories.UserRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepositories Repository;
+    @Autowired
+    private  CommentsRepositories commentsRepository;
 
     @Autowired
     private  UserRepositories UserRepositories;
@@ -30,7 +33,7 @@ public class PostService {
     }
 
 
-    public PostResponseDto CreatePost(PostRequestDto request) {
+    public PostResponseDto CreatePost(PostRequestDto request, User currentUser) {
         User user = UserRepositories.findById(request.getAuthorId())
                 .orElseThrow(() -> new ResourceNotFoundException("User with Id '" + request.getAuthorId() + "' was not found"));
 
@@ -59,9 +62,17 @@ public class PostService {
     }
 
 
-    public void deletePost(String id) {
+    public void deletePost(String id, User currentUser) {
         Post post = Repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("We can't delete User with this id: " + id));
+
+        if (post.getAuthorId() != currentUser.getUserId() && !"ADMIN".equals(currentUser.getRole())) {
+            throw new RuntimeException("You are not allowed to delete this post");
+        }
+
+
+        commentsRepository.deleteByPostId(post.getPostId());
+
         Repository.delete(post);
     }
 

@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommentsRepositories extends MongoRepository<Comments, String> {
-
+void deleteByPostId(String postId);
 }
