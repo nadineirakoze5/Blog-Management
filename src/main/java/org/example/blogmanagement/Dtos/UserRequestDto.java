@@ -19,6 +19,6 @@ public class UserRequestDto {
     private String email;
 
     @NotNull(message = "Password cannot be blank")
-    private int password;
+    private String password;
 
 }

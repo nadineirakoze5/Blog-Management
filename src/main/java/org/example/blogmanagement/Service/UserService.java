@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class UserService {
-//    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final List<UserResponseDto> users = new ArrayList<>();
     private final UserRepositories Repository;
 
@@ -31,8 +30,6 @@ public class UserService {
     }
     public UserResponseDto InsertUser(UserRequestDto UserRequest) {
 
-//        log.info("Added user to database");
-
         User user = new User();
 
         user.setUserName(UserRequest.getUsername());
@@ -40,12 +37,12 @@ public class UserService {
         user.setPassword(UserRequest.getPassword());
 
         Repository.save(user);
-//        logger.info("Added user to database");
+        log.info("Added user to database");
         return new UserResponseDto(user.getUserId(), user.getUserName(), user.getUserEmail());
     }
 
     public List<UserResponseDto> getAllUser() {
-//        log.info("Fetching all users");
+
         return Repository.findAll().stream().map(User -> new UserResponseDto(User.getUserId(), User.getUserName(), User.getUserEmail()))
                 .collect(Collectors.toList());
 
@@ -73,7 +70,7 @@ public class UserService {
 
 
     public Page<UserResponseDto> getUsersPaginated(int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
         return Repository.findAll(pageable)
